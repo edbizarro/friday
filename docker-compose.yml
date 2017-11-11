@@ -1,0 +1,131 @@
+version: '2.0'
+
+services:
+
+  #------------------------------------------------------------------
+  # Volumes
+  #------------------------------------------------------------------
+
+  volume_media:
+    container_name: friday_media
+    image: tianon/true
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
+      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
+      - ${FRIDAY_LOCATION_TVSHOWS}:/tv
+      - ${FRIDAY_LOCATION_MOVIES}:/movies
+      - ${FRIDAY_ROOT}/config:/config
+
+  #------------------------------------------------------------------
+  # Services
+  #------------------------------------------------------------------
+  transmission:
+    container_name: friday_transmission
+    image: linuxserver/transmission
+    restart: always
+    hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
+    ports:
+      - 9091:9091
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/transmission:/config
+    volumes_from:
+      - volume_media
+
+  sonarr:
+    container_name: friday_sonarr
+    image: linuxserver/sonarr
+    restart: always
+    hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
+    ports:
+      - 8989:8989
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/sonarr:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - transmission
+      - jackett
+
+  radarr:
+    container_name: friday_radarr
+    image: linuxserver/radarr
+    restart: always
+    hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+    ports:
+      - 7878:7878
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/radarr:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - transmission
+      - jackett
+
+  jackett:
+    container_name: friday_jackett
+    image: linuxserver/jackett
+    restart: always
+    hostname: ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
+    ports:
+      - 9117:9117
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/jackett:/config
+      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
+    volumes_from:
+      - volume_media
+
+  muximux:
+    container_name: friday_muximux
+    image: linuxserver/muximux
+    restart: always
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_MUXIMUX_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: "America/Sao_Paulo"
+    volumes:
+      - ${FRIDAY_ROOT}/config/muximux:/config
+    volumes_from:
+      - volume_media
+    ports:
+      - "8000:80"
+    depends_on:
+      - sonarr
+      - radarr
+
+networks:
+  friday:
