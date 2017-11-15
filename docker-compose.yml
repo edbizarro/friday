@@ -103,28 +103,6 @@ services:
       TZ: "America/Sao_Paulo"
     restart: always
 
-  # radarr:
-  #   container_name: friday_radarr
-  #   image: linuxserver/radarr
-  #   restart: always
-  #   hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
-  #   ports:
-  #     - 7878:7878
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/radarr:/config
-  #   volumes_from:
-  #     - volume_media
-  #   depends_on:
-  #     - transmission
-  #     - jackett
-
   jackett:
     container_name: friday_jackett
     image: linuxserver/jackett
