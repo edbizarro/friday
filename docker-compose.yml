@@ -41,49 +41,89 @@ services:
     volumes_from:
       - volume_media
 
-  sonarr:
-    container_name: friday_sonarr
-    image: linuxserver/sonarr
+  couchpotato:
+    container_name: friday_couchpotato
+    image: linuxserver/couchpotato
     restart: always
-    hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
+    hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
+          - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     ports:
-      - 8989:8989
+      - 5050:5050
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: "America/Sao_Paulo"
     volumes:
-      - ${FRIDAY_ROOT}/config/sonarr:/config
+      - ${FRIDAY_ROOT}/config/couchpotato:/config
     volumes_from:
       - volume_media
     depends_on:
       - transmission
       - jackett
 
-  radarr:
-    container_name: friday_radarr
-    image: linuxserver/radarr
+  sickrage:
+    container_name: friday_sickrage
+    image: linuxserver/sickrage
     restart: always
-    hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+    hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+          - ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     ports:
-      - 7878:7878
+      - 8181:8081
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: "America/Sao_Paulo"
     volumes:
-      - ${FRIDAY_ROOT}/config/radarr:/config
+      - ${FRIDAY_ROOT}/config/sickrage:/config
     volumes_from:
       - volume_media
     depends_on:
       - transmission
       - jackett
+
+  smokeping:
+    image: linuxserver/smokeping
+    container_name: friday_smokeping
+    volumes:
+      - ${FRIDAY_ROOT}/config/smokeping:/config
+      - ${FRIDAY_ROOT}/config/smokeping/data:/data
+    volumes_from:
+      - volume_media
+    ports:
+      - 27025:80
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: "America/Sao_Paulo"
+    restart: always
+
+  # radarr:
+  #   container_name: friday_radarr
+  #   image: linuxserver/radarr
+  #   restart: always
+  #   hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+  #   ports:
+  #     - 7878:7878
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/radarr:/config
+  #   volumes_from:
+  #     - volume_media
+  #   depends_on:
+  #     - transmission
+  #     - jackett
 
   jackett:
     container_name: friday_jackett
@@ -105,27 +145,26 @@ services:
     volumes_from:
       - volume_media
 
-  muximux:
-    container_name: friday_muximux
-    image: linuxserver/muximux
+  organizr:
+    container_name: friday_organizr
+    image: lsiocommunity/organizr
     restart: always
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_MUXIMUX_HOSTNAME}
+          - ${FRIDAY_NETWORK_ORGANIZR_HOSTNAME}
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: "America/Sao_Paulo"
     volumes:
-      - ${FRIDAY_ROOT}/config/muximux:/config
+      - ${FRIDAY_ROOT}/config/organizr:/config
     volumes_from:
       - volume_media
     ports:
       - "8000:80"
     depends_on:
-      - sonarr
-      - radarr
+      - couchpotato
 
 networks:
   friday:
