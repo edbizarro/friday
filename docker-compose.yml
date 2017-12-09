@@ -36,6 +36,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/transmission:/config
     volumes_from:
@@ -55,7 +56,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: "America/Sao_Paulo"
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/couchpotato:/config
     volumes_from:
@@ -78,7 +79,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: "America/Sao_Paulo"
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/sickrage:/config
     volumes_from:
@@ -100,7 +101,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: "America/Sao_Paulo"
+      TZ: ${FRIDAY_TIMEZONE}
     restart: always
 
   jackett:
@@ -117,6 +118,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/jackett:/config
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
@@ -134,15 +136,61 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: "America/Sao_Paulo"
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/organizr:/config
     volumes_from:
       - volume_media
     ports:
-      - "8000:80"
+      - 8000:80
     depends_on:
       - couchpotato
+
+  mysql:
+    container_name: friday_mysql
+    image: linuxserver/mariadb
+    restart: always
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_MYSQL_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      MYSQL_ROOT_PASSWORD: ${FRIDAY_DATABASE_PASS}
+    volumes_from:
+      - volume_media
+    volumes:
+      - ${FRIDAY_ROOT}/config/mysql:/config
+    ports:
+      - 3307:3306
+
+  kodi-headless:
+    container_name: friday_kodi
+    image: linuxserver/kodi-headless
+    restart: always
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_KODI_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes_from:
+      - volume_media
+    volumes:
+      - ${FRIDAY_ROOT}/config/kodi-headless/.kodi:/config/.kodi
+      - ${FRIDAY_LOCATION_TVSHOWS}:${FRIDAY_LOCATION_TVSHOWS}
+      - ${FRIDAY_LOCATION_MOVIES}:${FRIDAY_LOCATION_MOVIES}
+    ports:
+      - 9777:9777/udp
+      - 8585:8080
+    depends_on:
+      - mysql
+    links:
+      - mysql
 
 networks:
   friday:
