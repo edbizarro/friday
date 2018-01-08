@@ -25,7 +25,6 @@ services:
   transmission:
     container_name: friday_transmission
     image: linuxserver/transmission
-    restart: always
     hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
     networks:
       friday:
@@ -45,7 +44,6 @@ services:
   couchpotato:
     container_name: friday_couchpotato
     image: linuxserver/couchpotato
-    restart: always
     hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     networks:
       friday:
@@ -68,7 +66,6 @@ services:
   sickrage:
     container_name: friday_sickrage
     image: linuxserver/sickrage
-    restart: always
     hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     networks:
       friday:
@@ -102,12 +99,10 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
-    restart: always
 
   jackett:
     container_name: friday_jackett
     image: linuxserver/jackett
-    restart: always
     hostname: ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
     networks:
       friday:
@@ -128,7 +123,6 @@ services:
   organizr:
     container_name: friday_organizr
     image: lsiocommunity/organizr
-    restart: always
     networks:
       friday:
         aliases:
@@ -149,7 +143,6 @@ services:
   mysql:
     container_name: friday_mysql
     image: linuxserver/mariadb
-    restart: always
     networks:
       friday:
         aliases:
@@ -166,31 +159,30 @@ services:
     ports:
       - 3307:3306
 
-  kodi-headless:
-    container_name: friday_kodi
-    image: linuxserver/kodi-headless
-    restart: always
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_KODI_HOSTNAME}
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes_from:
-      - volume_media
-    volumes:
-      - ${FRIDAY_ROOT}/config/kodi-headless/.kodi:/config/.kodi
-      - ${FRIDAY_LOCATION_TVSHOWS}:${FRIDAY_LOCATION_TVSHOWS}
-      - ${FRIDAY_LOCATION_MOVIES}:${FRIDAY_LOCATION_MOVIES}
-    ports:
-      - 9777:9777/udp
-      - 8585:8080
-    depends_on:
-      - mysql
-    links:
-      - mysql
+        #kodi-headless:
+        #container_name: friday_kodi
+        #image: linuxserver/kodi-headless
+        #networks:
+        #friday:
+        #aliases:
+        #  - ${FRIDAY_NETWORK_KODI_HOSTNAME}
+        #environment:
+        #PGID: ${FRIDAY_CONFIG_PGID}
+        #PUID: ${FRIDAY_CONFIG_PUID}
+        #TZ: ${FRIDAY_TIMEZONE}
+        #volumes_from:
+        #- volume_media
+        #volumes:
+        #- ${FRIDAY_ROOT}/config/kodi-headless/.kodi:/config/.kodi
+        #- ${FRIDAY_LOCATION_TVSHOWS}:${FRIDAY_LOCATION_TVSHOWS}
+        #- ${FRIDAY_LOCATION_MOVIES}:${FRIDAY_LOCATION_MOVIES}
+        #ports:
+        #- 9777:9777/udp
+        #- 8585:8080
+        #depends_on:
+        #- mysql
+        #links:
+        #- mysql
 
 networks:
   friday:
