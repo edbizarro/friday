@@ -1,4 +1,4 @@
-version: '2.0'
+version: '2'
 
 services:
 
@@ -7,7 +7,6 @@ services:
   #------------------------------------------------------------------
 
   volume_media:
-    container_name: friday_media
     image: tianon/true
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
@@ -23,15 +22,11 @@ services:
   # Services
   #------------------------------------------------------------------
   transmission:
-    container_name: friday_transmission
     image: linuxserver/transmission
-    hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
     ports:
       - 9091:9091
+    expose:
+      - 9091
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -42,15 +37,13 @@ services:
       - volume_media
 
   couchpotato:
-    container_name: friday_couchpotato
     image: linuxserver/couchpotato
-    hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     ports:
       - 5050:5050
+    expose:
+      - 5050
+    links:
+      - "transmission:friday_transmission"
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -64,15 +57,13 @@ services:
       - jackett
 
   sickrage:
-    container_name: friday_sickrage
     image: linuxserver/sickrage
-    hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     ports:
       - 8181:8081
+    expose:
+      - 8181
+    links:
+      - "transmission:friday_transmission"
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -85,31 +76,30 @@ services:
       - transmission
       - jackett
 
-  smokeping:
-    image: linuxserver/smokeping
-    container_name: friday_smokeping
-    volumes:
-      - ${FRIDAY_ROOT}/config/smokeping:/config
-      - ${FRIDAY_ROOT}/config/smokeping/data:/data
-    volumes_from:
-      - volume_media
+  emby:
+    image: emby/embyserver
     ports:
-      - 27025:80
+      - 8096:8096
+      - 8920:8920
+    expose:
+      - 8096
+      - 8920
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
+      GIDLIST: 985
+    volumes:
+      - ${FRIDAY_ROOT}/config/emby:/config
+    volumes_from:
+      - volume_media
 
   jackett:
-    container_name: friday_jackett
     image: linuxserver/jackett
-    hostname: ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
     ports:
       - 9117:9117
+    expose:
+      - 9117
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -121,12 +111,7 @@ services:
       - volume_media
 
   organizr:
-    container_name: friday_organizr
     image: lsiocommunity/organizr
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_ORGANIZR_HOSTNAME}
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -140,24 +125,22 @@ services:
     depends_on:
       - couchpotato
 
-  mysql:
-    container_name: friday_mysql
-    image: linuxserver/mariadb
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_MYSQL_HOSTNAME}
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-      MYSQL_ROOT_PASSWORD: ${FRIDAY_DATABASE_PASS}
-    volumes_from:
-      - volume_media
-    volumes:
-      - ${FRIDAY_ROOT}/config/mysql:/config
-    ports:
-      - 3307:3306
+  # mysql:
+  #   container_name: friday_mysql
+  #   image: linuxserver/mariadb
+  #   networks:
+  #     - friday
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #     MYSQL_ROOT_PASSWORD: ${FRIDAY_DATABASE_PASS}
+  #   volumes_from:
+  #     - volume_media
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/mysql:/config
+  #   ports:
+  #     - 3307:3306
 
         #kodi-headless:
         #container_name: friday_kodi
@@ -183,6 +166,3 @@ services:
         #- mysql
         #links:
         #- mysql
-
-networks:
-  friday:
