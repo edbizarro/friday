@@ -21,12 +21,17 @@ services:
   #------------------------------------------------------------------
   # Services
   #------------------------------------------------------------------
+
   transmission:
     image: linuxserver/transmission
+    hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
     ports:
       - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     expose:
       - 9091
+      - 51413
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -35,15 +40,20 @@ services:
       - ${FRIDAY_ROOT}/config/transmission:/config
     volumes_from:
       - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
 
   couchpotato:
     image: linuxserver/couchpotato
+    hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     ports:
       - 5050:5050
     expose:
       - 5050
     links:
-      - "transmission:friday_transmission"
+      - transmission
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -54,16 +64,21 @@ services:
       - volume_media
     depends_on:
       - transmission
-      - jackett
+      # - jackett
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
 
   sickrage:
     image: linuxserver/sickrage
+    hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     ports:
       - 8181:8081
     expose:
       - 8181
     links:
-      - "transmission:friday_transmission"
+      - transmission
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -74,10 +89,15 @@ services:
       - volume_media
     depends_on:
       - transmission
-      - jackett
+      # - jackett
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
 
   emby:
     image: emby/embyserver
+    hostname: ${FRIDAY_NETWORK_EMBY_HOSTNAME}
     ports:
       - 8096:8096
       - 8920:8920
@@ -93,37 +113,41 @@ services:
       - ${FRIDAY_ROOT}/config/emby:/config
     volumes_from:
       - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_EMBY_HOSTNAME}
 
-  jackett:
-    image: linuxserver/jackett
-    ports:
-      - 9117:9117
-    expose:
-      - 9117
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/jackett:/config
-      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
-    volumes_from:
-      - volume_media
+  # jackett:
+  #   image: linuxserver/jackett
+  #   ports:
+  #     - 9117:9117
+  #   expose:
+  #     - 9117
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/jackett:/config
+  #     - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
+  #   volumes_from:
+  #     - volume_media
 
-  organizr:
-    image: lsiocommunity/organizr
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/organizr:/config
-    volumes_from:
-      - volume_media
-    ports:
-      - 8000:80
-    depends_on:
-      - couchpotato
+  # organizr:
+  #   image: lsiocommunity/organizr
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/organizr:/config
+  #   volumes_from:
+  #     - volume_media
+  #   ports:
+  #     - 8000:80
+  #   depends_on:
+  #     - couchpotato
 
   # mysql:
   #   container_name: friday_mysql
@@ -166,3 +190,6 @@ services:
         #- mysql
         #links:
         #- mysql
+
+networks:
+  friday:
