@@ -24,6 +24,7 @@ services:
 
   transmission:
     image: linuxserver/transmission
+    restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
     ports:
       - 9091:9091
@@ -47,6 +48,7 @@ services:
 
   couchpotato:
     image: linuxserver/couchpotato
+    restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
     ports:
       - 5050:5050
@@ -72,6 +74,7 @@ services:
 
   sickrage:
     image: linuxserver/sickrage
+    restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
     ports:
       - 8181:8081
@@ -97,6 +100,7 @@ services:
 
   emby:
     image: emby/embyserver
+    restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_EMBY_HOSTNAME}
     ports:
       - 8096:8096
@@ -117,7 +121,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_EMBY_HOSTNAME}
-
+    
   # jackett:
   #   image: linuxserver/jackett
   #   ports:
@@ -166,30 +170,30 @@ services:
   #   ports:
   #     - 3307:3306
 
-        #kodi-headless:
-        #container_name: friday_kodi
-        #image: linuxserver/kodi-headless
-        #networks:
-        #friday:
-        #aliases:
-        #  - ${FRIDAY_NETWORK_KODI_HOSTNAME}
-        #environment:
-        #PGID: ${FRIDAY_CONFIG_PGID}
-        #PUID: ${FRIDAY_CONFIG_PUID}
-        #TZ: ${FRIDAY_TIMEZONE}
-        #volumes_from:
-        #- volume_media
-        #volumes:
-        #- ${FRIDAY_ROOT}/config/kodi-headless/.kodi:/config/.kodi
-        #- ${FRIDAY_LOCATION_TVSHOWS}:${FRIDAY_LOCATION_TVSHOWS}
-        #- ${FRIDAY_LOCATION_MOVIES}:${FRIDAY_LOCATION_MOVIES}
-        #ports:
-        #- 9777:9777/udp
-        #- 8585:8080
-        #depends_on:
-        #- mysql
-        #links:
-        #- mysql
+  # kodi-headless:
+  #   container_name: friday_kodi
+  #   image: linuxserver/kodi-headless
+  #   networks:
+  #   friday:
+  #   aliases:
+  #     - ${FRIDAY_NETWORK_KODI_HOSTNAME}
+  #   environment:
+  #   PGID: ${FRIDAY_CONFIG_PGID}
+  #   PUID: ${FRIDAY_CONFIG_PUID}
+  #   TZ: ${FRIDAY_TIMEZONE}
+  #   volumes_from:
+  #     - volume_media
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/kodi-headless/.kodi:/config/.kodi
+  #     - ${FRIDAY_LOCATION_TVSHOWS}:${FRIDAY_LOCATION_TVSHOWS}
+  #     - ${FRIDAY_LOCATION_MOVIES}:${FRIDAY_LOCATION_MOVIES}
+  #   ports:
+  #     - 9777:9777/udp
+  #     - 8585:8080
+  #   depends_on:
+  #     - mysql
+  #   links:
+  #     - mysql
 
 networks:
   friday:
