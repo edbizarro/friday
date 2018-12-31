@@ -16,6 +16,7 @@ services:
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
       - ${FRIDAY_LOCATION_TVSHOWS}:/tv
       - ${FRIDAY_LOCATION_MOVIES}:/movies
+      - ${FRIDAY_LOCATION_MUSIC}:/music
       - ${FRIDAY_ROOT}/config:/config
 
   #------------------------------------------------------------------
@@ -142,6 +143,26 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
+  
+  lidarr:
+    image: linuxserver/lidarr
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+    ports:
+      - 8686:8686
+    expose:
+      - 8686
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}          
+    volumes:
+      - ${FRIDAY_ROOT}/config/lidarr:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
   
     
   # jackett:
