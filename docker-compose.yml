@@ -121,6 +121,28 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_EMBY_HOSTNAME}
+
+  ombi:
+    image: linuxserver/ombi
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_OMBI_HOSTNAME}
+    ports:
+      - 3579:3579
+    expose:
+      - 3579
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}      
+    volumes:
+      - ${FRIDAY_ROOT}/config/ombi:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
+  
     
   # jackett:
   #   image: linuxserver/jackett
