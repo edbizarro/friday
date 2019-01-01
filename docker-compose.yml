@@ -73,7 +73,7 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
 
-  sickrage:
+  sickchill:
     image: linuxserver/sickrage
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
