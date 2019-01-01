@@ -184,22 +184,42 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
   
-    
-  # jackett:
-  #   image: linuxserver/jackett
-  #   ports:
-  #     - 9117:9117
-  #   expose:
-  #     - 9117
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/jackett:/config
-  #     - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
-  #   volumes_from:
-  #     - volume_media
+  hydra:
+    image: linuxserver/hydra2
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+    ports:
+      - 5076:5076
+    expose:
+      - 5076
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID} 
+      TZ: ${FRIDAY_TIMEZONE}         
+    volumes:
+      - ${FRIDAY_ROOT}/config/hydra:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+  
+  jackett:
+    image: linuxserver/jackett
+    ports:
+      - 9117:9117
+    expose:
+      - 9117
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/jackett:/config
+      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
+    volumes_from:
+      - volume_media
 
   # organizr:
   #   image: lsiocommunity/organizr
