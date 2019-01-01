@@ -22,7 +22,28 @@ services:
   #------------------------------------------------------------------
   # Services
   #------------------------------------------------------------------
-
+  
+  heimdall:
+    image: linuxserver/heimdall
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
+    ports:
+      - 9876:80
+    expose:
+      - 9876
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID} 
+      TZ: ${FRIDAY_TIMEZONE}         
+    volumes:
+      - ${FRIDAY_ROOT}/config/heimdall:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
+          
   transmission:
     image: linuxserver/transmission
     restart: unless-stopped
@@ -203,7 +224,7 @@ services:
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}    
   
   jackett:
     image: linuxserver/jackett
