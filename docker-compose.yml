@@ -228,6 +228,8 @@ services:
   
   jackett:
     image: linuxserver/jackett
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
     ports:
       - 9117:9117
     expose:
@@ -241,6 +243,10 @@ services:
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
     volumes_from:
       - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
 
   # organizr:
   #   image: lsiocommunity/organizr
