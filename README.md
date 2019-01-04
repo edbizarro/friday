@@ -62,3 +62,12 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
  - Hydra2 URL: http://hydra.friday:5076
  - Jackett URL: http://jackett.friday:9117
  - Smokeping URL: http://smokeping.friday:9886/smokeping/smokeping.cgi
+ 
+ ## TO-DO
+ 
+ - [ ] Add an TRAEFIK Proxy to drop ports on hostnames
+ - [ ] Add better monitoring solution (netdata?, prometheus?)
+ - [ ] Make a better README
+
+ ---
+ 
