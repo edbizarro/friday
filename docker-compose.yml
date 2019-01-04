@@ -18,6 +18,7 @@ services:
       - ${FRIDAY_LOCATION_MOVIES}:/movies
       - ${FRIDAY_LOCATION_MUSIC}:/music
       - ${FRIDAY_ROOT}/config:/config
+      - /etc/localtime:/etc/localtime:ro
 
   #------------------------------------------------------------------
   # Services
