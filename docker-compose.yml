@@ -97,13 +97,14 @@ services:
   sickchill:
     image: linuxserver/sickrage
     restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
+    hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
     ports:
       - 8181:8081
     expose:
       - 8181
     links:
       - transmission
+      - jackett      
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -114,11 +115,11 @@ services:
       - volume_media
     depends_on:
       - transmission
-      # - jackett
+      - jackett
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_SICKRAGE_HOSTNAME}
+          - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
 
   emby:
     image: emby/embyserver
@@ -247,6 +248,28 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
+          
+  smokeping:
+    image: linuxserver/smokeping
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
+    ports:
+      - 9886:80
+    expose:
+      - 9886
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/smokeping:/config      
+      - ${FRIDAY_ROOT}/config/smokeping/data:/data      
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
           
   watchtower:
     container_name: watchtower
