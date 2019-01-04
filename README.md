@@ -71,3 +71,6 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
 
  ---
  
+ [![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com)
+ [![forthebadge](https://forthebadge.com/images/badges/powered-by-netflix.svg)](https://forthebadge.com)
+ 
