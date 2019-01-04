@@ -8,6 +8,9 @@
 - Lidarr
 - Emby
 - Ombi
+- Heimdall
+- Nzbget
+- Nzbhydra2
 - Jackett
 - Smokeping
 
