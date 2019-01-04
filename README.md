@@ -65,7 +65,7 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
  
  ## TO-DO
  
- - [ ] Add an TRAEFIK Proxy to drop ports on hostnames
+ - [ ] Add a TRAEFIK reverse proxy to drop ports on hostnames
  - [ ] Add better monitoring solution (netdata?, prometheus?)
  - [ ] Make a better README
 
