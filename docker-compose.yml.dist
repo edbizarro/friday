@@ -207,26 +207,26 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
   
-  # hydra:
-  #   image: linuxserver/hydra2
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
-  #   ports:
-  #     - 5076:5076
-  #   expose:
-  #     - 5076
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID} 
-  #     TZ: ${FRIDAY_TIMEZONE}         
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/hydra:/config
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}    
+  hydra:
+    image: linuxserver/hydra2
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+    ports:
+      - 5076:5076
+    expose:
+      - 5076
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID} 
+      TZ: ${FRIDAY_TIMEZONE}         
+    volumes:
+      - ${FRIDAY_ROOT}/config/hydra:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}    
   
   jackett:
     image: linuxserver/jackett
@@ -250,35 +250,35 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
           
-  # smokeping:
-  #   image: linuxserver/smokeping
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-  #   ports:
-  #     - 9886:80
-  #   expose:
-  #     - 9886
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/smokeping:/config      
-  #     - ${FRIDAY_ROOT}/config/smokeping/data:/data      
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
+  smokeping:
+    image: linuxserver/smokeping
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
+    ports:
+      - 9886:80
+    expose:
+      - 9886
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/smokeping:/config      
+      - ${FRIDAY_ROOT}/config/smokeping/data:/data      
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
           
-  # watchtower:
-  #   container_name: watchtower
-  #   restart: always
-  #   image: v2tec/watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command: --schedule "0 0 4 * * *" --cleanup
+  watchtower:
+    container_name: watchtower
+    restart: always
+    image: v2tec/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --schedule "0 0 4 * * *" --cleanup
 
 networks:
   friday:
