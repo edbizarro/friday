@@ -167,45 +167,45 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
   
-  lidarr:
-    image: linuxserver/lidarr
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
-    ports:
-      - 8686:8686
-    expose:
-      - 8686
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}          
-    volumes:
-      - ${FRIDAY_ROOT}/config/lidarr:/config
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
-  nzbget:
-    image: linuxserver/nzbget
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
-    ports:
-      - 6789:6789
-    expose:
-      - 6789
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID} 
-      TZ: ${FRIDAY_TIMEZONE}         
-    volumes:
-      - ${FRIDAY_ROOT}/config/nzbget:/config
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
+  # lidarr:
+  #   image: linuxserver/lidarr
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+  #   ports:
+  #     - 8686:8686
+  #   expose:
+  #     - 8686
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}          
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/lidarr:/config
+  #   volumes_from:
+  #     - volume_media
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+  # nzbget:
+  #   image: linuxserver/nzbget
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
+  #   ports:
+  #     - 6789:6789
+  #   expose:
+  #     - 6789
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID} 
+  #     TZ: ${FRIDAY_TIMEZONE}         
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/nzbget:/config
+  #   volumes_from:
+  #     - volume_media
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
   
   # hydra:
   #   image: linuxserver/hydra2
