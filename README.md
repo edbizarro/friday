@@ -5,14 +5,15 @@
 - Transmission
 - Couchpotato
 - Sickchill
-- Lidarr
+- Lidarr (WIP)
 - Emby
 - Ombi
 - Heimdall
-- Nzbget
-- Nzbhydra2
+- Nzbget (WIP)
+- Nzbhydra2 (WIP)
 - Jackett
-- Smokeping
+- Smokeping (WIP)
+- Watchtower (WIP)
 
 ## Requirements
 
@@ -51,16 +52,16 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
 
 :construction: This area is under construction
 
- - Heimdall URL: http://heimdall.friday:9876 
+ - Heimdall URL: http://heimdall.friday:9876
+ - Ombi URL: http://ombi.friday:3579
  - Transmission URL: http://transmission.friday:9091
- - Nzbget URL: http://nzbget.friday:6789
+ - Jackett URL: http://jackett.friday:9117 
  - Emby URL: http://emby.friday:8096
  - Couchpotato URL: http://couchpotato.friday:5050
  - Sickchill URL: http://sickchill.friday:8181
- - Ombi URL: http://ombi.friday:3579
+ - Nzbget URL: http://nzbget.friday:6789  
  - Lidarr URL: http://lidarr.friday:8686
- - Hydra2 URL: http://hydra.friday:5076
- - Jackett URL: http://jackett.friday:9117
+ - Hydra2 URL: http://hydra.friday:5076 
  - Smokeping URL: http://smokeping.friday:9886/smokeping/smokeping.cgi
  
  ## TO-DO
