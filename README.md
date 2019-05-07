@@ -16,7 +16,7 @@
 
 ## Requirements
 
-- Docker
+- [Docker](https://docs.docker.com/install/)
 - Docker Compose
 
 # Set up
