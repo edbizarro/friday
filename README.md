@@ -5,12 +5,11 @@
 - Transmission
 - Couchpotato
 - Sickchill
-- Lidarr (WIP)
+- Lidarr
 - Emby
 - Ombi
 - Heimdall
-- Nzbget (WIP)
-- Nzbhydra2 (WIP)
+- Nzbget
 - Jackett
 - Smokeping (WIP)
 - Watchtower (WIP)
