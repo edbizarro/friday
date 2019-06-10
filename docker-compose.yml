@@ -1,7 +1,6 @@
-version: '2'
+version: "2"
 
 services:
-
   #------------------------------------------------------------------
   # Volumes
   #------------------------------------------------------------------
@@ -23,7 +22,7 @@ services:
   #------------------------------------------------------------------
   # Services
   #------------------------------------------------------------------
-  
+
   heimdall:
     image: linuxserver/heimdall
     restart: unless-stopped
@@ -34,8 +33,8 @@ services:
       - 9876
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID} 
-      TZ: ${FRIDAY_TIMEZONE}         
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/heimdall:/config
     volumes_from:
@@ -44,7 +43,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
-          
+
   transmission:
     image: linuxserver/transmission
     restart: unless-stopped
@@ -105,7 +104,7 @@ services:
       - 8181
     links:
       - transmission
-      - jackett      
+      - jackett
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
@@ -157,7 +156,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}      
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/ombi:/config
     volumes_from:
@@ -166,68 +165,68 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
-  
-  # lidarr:
-  #   image: linuxserver/lidarr
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
-  #   ports:
-  #     - 8686:8686
-  #   expose:
-  #     - 8686
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}          
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/lidarr:/config
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
-  # nzbget:
-  #   image: linuxserver/nzbget
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
-  #   ports:
-  #     - 6789:6789
-  #   expose:
-  #     - 6789
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID} 
-  #     TZ: ${FRIDAY_TIMEZONE}         
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/nzbget:/config
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
-  
-  # hydra:
-  #   image: linuxserver/hydra2
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
-  #   ports:
-  #     - 5076:5076
-  #   expose:
-  #     - 5076
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID} 
-  #     TZ: ${FRIDAY_TIMEZONE}         
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/hydra:/config
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}    
-  
+
+  lidarr:
+    image: linuxserver/lidarr
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+    ports:
+      - 8686:8686
+    expose:
+      - 8686
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/lidarr:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+  nzbget:
+    image: linuxserver/nzbget
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
+    ports:
+      - 6789:6789
+    expose:
+      - 6789
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/nzbget:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
+
+  hydra:
+    image: linuxserver/hydra2
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+    ports:
+      - 5076:5076
+    expose:
+      - 5076
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/hydra:/config
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+
   jackett:
     image: linuxserver/jackett
     restart: unless-stopped
@@ -249,7 +248,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
-          
+
   # smokeping:
   #   image: linuxserver/smokeping
   #   restart: unless-stopped
@@ -263,15 +262,14 @@ services:
   #     PUID: ${FRIDAY_CONFIG_PUID}
   #     TZ: ${FRIDAY_TIMEZONE}
   #   volumes:
-  #     - ${FRIDAY_ROOT}/config/smokeping:/config      
-  #     - ${FRIDAY_ROOT}/config/smokeping/data:/data      
+  #     - ${FRIDAY_ROOT}/config/smokeping:/config
+  #     - ${FRIDAY_ROOT}/config/smokeping/data:/data
   #   volumes_from:
   #     - volume_media
   #   networks:
   #     friday:
   #       aliases:
   #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-          
   # watchtower:
   #   container_name: watchtower
   #   restart: always
