@@ -95,14 +95,42 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
 
-  sickchill:
-    image: linuxserver/sickrage
+  # sickchill:
+  #   image: linuxserver/sickrage
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+  #   ports:
+  #     - 8181:8081
+  #   expose:
+  #     - 8181
+  #   links:
+  #     - transmission
+  #     - jackett
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/sickrage:/config
+  #   volumes_from:
+  #     - volume_media
+  #   depends_on:
+  #     - transmission
+  #     - jackett
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+  
+  
+  sonarr:
+    image: linuxserver/sonarr
     restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+    hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
-      - 8181:8081
+      - 8989:8989
     expose:
-      - 8181
+      - 8989
     links:
       - transmission
       - jackett
@@ -111,7 +139,7 @@ services:
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
-      - ${FRIDAY_ROOT}/config/sickrage:/config
+      - ${FRIDAY_ROOT}/config/sonarr:/config
     volumes_from:
       - volume_media
     depends_on:
@@ -120,7 +148,7 @@ services:
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+          - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
 
   emby:
     image: emby/embyserver
