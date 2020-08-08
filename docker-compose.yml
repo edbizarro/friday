@@ -278,6 +278,21 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
 
+  openspeedtest:
+    image: openspeedtest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+    ports:
+      - 8080:8080
+    expose:
+      - 8080    
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+
   # smokeping:
   #   image: linuxserver/smokeping
   #   restart: unless-stopped

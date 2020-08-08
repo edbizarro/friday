@@ -279,6 +279,20 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --schedule "0 0 4 * * *" --cleanup
-
+  
+  openspeedtest:
+    image: openspeedtest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+    ports:
+      - 8080:8080
+    expose:
+      - 8080    
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
 networks:
   friday:
