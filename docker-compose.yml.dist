@@ -281,7 +281,7 @@ services:
     command: --schedule "0 0 4 * * *" --cleanup
   
   openspeedtest:
-    image: openspeedtest
+    image: openspeedtest/latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
     ports:

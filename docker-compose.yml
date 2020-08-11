@@ -279,7 +279,7 @@ services:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
 
   openspeedtest:
-    image: openspeedtest
+    image: openspeedtest/latest:speedtest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
     ports:
