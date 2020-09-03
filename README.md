@@ -3,8 +3,8 @@
 ## Included Software
 
 - Transmission
-- Couchpotato
-- Sickchill
+- CouchPotato
+- Sonarr
 - Lidarr
 - Emby
 - Ombi
@@ -12,7 +12,6 @@
 - Nzbget
 - Jackett
 - Smokeping (WIP)
-- Watchtower (WIP)
 
 ## Requirements
 
