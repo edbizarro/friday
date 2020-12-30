@@ -278,20 +278,20 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
 
-  openspeedtest:
-    image: openspeedtest/latest:speedtest
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
-    ports:
-      - 8080:8080
-    expose:
-      - 8080    
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+  # openspeedtest:
+  #   image: openspeedtest/latest:speedtest
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+  #   ports:
+  #     - 8080:8080
+  #   expose:
+  #     - 8080    
+  #   volumes_from:
+  #     - volume_media
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
 
   # smokeping:
   #   image: linuxserver/smokeping
@@ -313,14 +313,7 @@ services:
   #   networks:
   #     friday:
   #       aliases:
-  #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-  # watchtower:
-  #   container_name: watchtower
-  #   restart: always
-  #   image: v2tec/watchtower
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command: --schedule "0 0 4 * * *" --cleanup
+  #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}  
 
 networks:
   friday:
