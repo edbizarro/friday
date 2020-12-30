@@ -1,7 +1,6 @@
-version: '2'
+version: "2"
 
 services:
-
   #------------------------------------------------------------------
   # Volumes
   #------------------------------------------------------------------
@@ -17,13 +16,14 @@ services:
       - ${FRIDAY_LOCATION_TVSHOWS}:/tv
       - ${FRIDAY_LOCATION_MOVIES}:/movies
       - ${FRIDAY_LOCATION_MUSIC}:/music
+      - ${FRIDAY_LOCATION_ANIME}:/anime
       - ${FRIDAY_ROOT}/config:/config
       - /etc/localtime:/etc/localtime:ro
 
   #------------------------------------------------------------------
   # Services
   #------------------------------------------------------------------
-  
+
   heimdall:
     image: linuxserver/heimdall
     restart: unless-stopped
@@ -34,8 +34,8 @@ services:
       - 9876
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID} 
-      TZ: ${FRIDAY_TIMEZONE}         
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/heimdall:/config
     volumes_from:
@@ -44,7 +44,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
-          
+
   transmission:
     image: linuxserver/transmission
     restart: unless-stopped
@@ -95,23 +95,51 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
 
-  sickchill:
-    image: linuxserver/sickrage
+  # sickchill:
+  #   image: linuxserver/sickrage
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+  #   ports:
+  #     - 8181:8081
+  #   expose:
+  #     - 8181
+  #   links:
+  #     - transmission
+  #     - jackett
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/sickrage:/config
+  #   volumes_from:
+  #     - volume_media
+  #   depends_on:
+  #     - transmission
+  #     - jackett
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+  
+  
+  sonarr:
+    image: linuxserver/sonarr
     restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+    hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
-      - 8181:8081
+      - 8989:8989
     expose:
-      - 8181
+      - 8989
     links:
       - transmission
-      - jackett      
+      - jackett
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
-      - ${FRIDAY_ROOT}/config/sickrage:/config
+      - ${FRIDAY_ROOT}/config/sonarr:/config
     volumes_from:
       - volume_media
     depends_on:
@@ -120,7 +148,7 @@ services:
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
+          - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
 
   emby:
     image: emby/embyserver
@@ -157,7 +185,7 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}      
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/ombi:/config
     volumes_from:
@@ -166,7 +194,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
-  
+
   lidarr:
     image: linuxserver/lidarr
     restart: unless-stopped
@@ -177,7 +205,7 @@ services:
       - 8686
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}          
+      PUID: ${FRIDAY_CONFIG_PUID}
     volumes:
       - ${FRIDAY_ROOT}/config/lidarr:/config
     volumes_from:
@@ -196,8 +224,8 @@ services:
       - 6789
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID} 
-      TZ: ${FRIDAY_TIMEZONE}         
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/nzbget:/config
     volumes_from:
@@ -206,7 +234,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
-  
+
   hydra:
     image: linuxserver/hydra2
     restart: unless-stopped
@@ -217,8 +245,8 @@ services:
       - 5076
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID} 
-      TZ: ${FRIDAY_TIMEZONE}         
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/hydra:/config
     volumes_from:
@@ -226,8 +254,8 @@ services:
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}    
-  
+          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+
   jackett:
     image: linuxserver/jackett
     restart: unless-stopped
@@ -249,42 +277,44 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
-          
-  smokeping:
-    image: linuxserver/smokeping
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-    ports:
-      - 9886:80
-    expose:
-      - 9886
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/smokeping:/config      
-      - ${FRIDAY_ROOT}/config/smokeping/data:/data      
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}          
-  
-  openspeedtest:
-    image: openspeedtest/latest
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
-    ports:
-      - 8080:8080
-    expose:
-      - 8080    
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+
+  # openspeedtest:
+  #   image: openspeedtest/latest:speedtest
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+  #   ports:
+  #     - 8080:8080
+  #   expose:
+  #     - 8080    
+  #   volumes_from:
+  #     - volume_media
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
+
+  # smokeping:
+  #   image: linuxserver/smokeping
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
+  #   ports:
+  #     - 9886:80
+  #   expose:
+  #     - 9886
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/smokeping:/config
+  #     - ${FRIDAY_ROOT}/config/smokeping/data:/data
+  #   volumes_from:
+  #     - volume_media
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}  
+
 networks:
   friday:
+    driver: bridge
