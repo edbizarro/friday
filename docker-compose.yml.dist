@@ -270,15 +270,7 @@ services:
     networks:
       friday:
         aliases:
-          - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-          
-  watchtower:
-    container_name: watchtower
-    restart: always
-    image: v2tec/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --schedule "0 0 4 * * *" --cleanup
+          - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}          
   
   openspeedtest:
     image: openspeedtest/latest
