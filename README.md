@@ -38,7 +38,7 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
 127.0.0.1 jackett.friday
 127.0.0.1 transmission.friday
 127.0.0.1 couchpotato.friday
-127.0.0.1 sickchill.friday
+127.0.0.1 sonarr.friday
 127.0.0.1 lidarr.friday
 127.0.0.1 nzbget.friday
 127.0.0.1 hydra.friday
@@ -53,18 +53,18 @@ macOS usually `501` (it may vary). For the GID, Linux should work with `1000` an
  - Heimdall URL: http://heimdall.friday:9876
  - Ombi URL: http://ombi.friday:3579
  - Transmission URL: http://transmission.friday:9091
- - Jackett URL: http://jackett.friday:9117 
  - Emby URL: http://emby.friday:8096
  - Couchpotato URL: http://couchpotato.friday:5050
- - Sickchill URL: http://sickchill.friday:8181
- - Nzbget URL: http://nzbget.friday:6789  
+ - Sonarr URL: http://sickchill.friday:8989
+ - Nzbget URL: http://nzbget.friday:6789
  - Lidarr URL: http://lidarr.friday:8686
- - Hydra2 URL: http://hydra.friday:5076 
+ - Jackett URL: http://jackett.friday:9117
+ - Hydra2 URL: http://hydra.friday:5076
  - Smokeping URL: http://smokeping.friday:9886/smokeping/smokeping.cgi
  
  ## TO-DO
  
- - [ ] Add a TRAEFIK reverse proxy to drop ports on hostnames
+ - [ ] Add TRAEFIK as reverse proxy to drop ports on hostnames
  - [ ] Add better monitoring solution (netdata?, prometheus?)
  - [ ] Make a better README
 
