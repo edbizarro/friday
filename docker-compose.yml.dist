@@ -149,6 +149,33 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
+          
+  radarr:
+    image: linuxserver/radarr
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+    ports:
+      - 7878:7878
+    expose:
+      - 7878
+    links:
+      - transmission
+      - jackett
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/radarr:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - transmission
+      - jackett
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
 
   emby:
     image: emby/embyserver
@@ -214,6 +241,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
+
   nzbget:
     image: linuxserver/nzbget
     restart: unless-stopped
@@ -277,6 +305,30 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
+
+  flaresolverr:
+    image: flaresolverr/flaresolverr
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
+    ports:
+      - 8191:8191
+    expose:
+      - 8191
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      LOG_LEVEL: info
+      CAPTCHA_SOLVER: hcaptcha-solver
+    volumes:
+      - ${FRIDAY_ROOT}/config/flaresolverr:/config
+      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
+    volumes_from:
+      - volume_media
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
 
   # openspeedtest:
   #   image: openspeedtest/latest:speedtest
