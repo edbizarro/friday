@@ -124,7 +124,7 @@ services:
   
   
   sonarr:
-    image: linuxserver/sonarr
+    image: linuxserver/sonarr:preview
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
