@@ -69,31 +69,31 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
 
-  couchpotato:
-    image: linuxserver/couchpotato
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
-    ports:
-      - 5050:5050
-    expose:
-      - 5050
-    links:
-      - transmission
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/couchpotato:/config
-    volumes_from:
-      - volume_media
-    depends_on:
-      - transmission
-      # - jackett
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
+  # couchpotato:
+  #   image: linuxserver/couchpotato
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
+  #   ports:
+  #     - 5050:5050
+  #   expose:
+  #     - 5050
+  #   links:
+  #     - transmission
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/couchpotato:/config
+  #   volumes_from:
+  #     - volume_media
+  #   depends_on:
+  #     - transmission
+  #     # - jackett
+  #   networks:
+  #     friday:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
 
   # sickchill:
   #   image: linuxserver/sickrage
@@ -124,7 +124,7 @@ services:
   
   
   sonarr:
-    image: linuxserver/sonarr:preview
+    image: linuxserver/sonarr
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
@@ -150,32 +150,32 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
   
-  # radarr:
-  #   image: linuxserver/radarr
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
-  #   ports:
-  #     - 7878:7878
-  #   expose:
-  #     - 7878
-  #   links:
-  #     - transmission
-  #     - jackett
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/radarr:/config
-  #   volumes_from:
-  #     - volume_media
-  #   depends_on:
-  #     - transmission
-  #     - jackett
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+  radarr:
+    image: linuxserver/radarr
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+    ports:
+      - 7878:7878
+    expose:
+      - 7878
+    links:
+      - transmission
+      - jackett
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/radarr:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - transmission
+      - jackett
+    networks:
+      friday:
+        aliases:
+          - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
   emby:
     image: emby/embyserver
     restart: unless-stopped
