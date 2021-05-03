@@ -216,6 +216,12 @@ services:
       - ${FRIDAY_ROOT}/config/ombi:/config
     volumes_from:
       - volume_media
+    depends_on:
+      - radarr
+      - sonarr
+    links:
+      - radarr
+      - sonarr
     networks:
       friday:
         aliases:
@@ -236,6 +242,9 @@ services:
       - ${FRIDAY_ROOT}/config/lidarr:/config
     volumes_from:
       - volume_media
+    depends_on:
+      - transmission
+      - jackett
     networks:
       friday:
         aliases:
@@ -277,6 +286,12 @@ services:
       - ${FRIDAY_ROOT}/config/hydra:/config
     volumes_from:
       - volume_media
+    depends_on:
+      - transmission
+      - jackett
+    links:
+      - transmission
+      - jackett
     networks:
       friday:
         aliases:
@@ -303,6 +318,7 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
+  
   flaresolverr:
     image: flaresolverr/flaresolverr
     restart: unless-stopped
