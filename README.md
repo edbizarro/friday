@@ -3,7 +3,6 @@
 ## Included Software
 
 - Transmission
-- CouchPotato
 - Sonarr
 - Lidarr
 - Radarr
@@ -13,7 +12,6 @@
 - Nzbget
 - Jackett
 - Flaresolverr
-- Smokeping (WIP)
 
 ## Requirements
 
