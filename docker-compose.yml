@@ -69,60 +69,6 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
 
-  # couchpotato:
-  #   image: linuxserver/couchpotato
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
-  #   ports:
-  #     - 5050:5050
-  #   expose:
-  #     - 5050
-  #   links:
-  #     - transmission
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/couchpotato:/config
-  #   volumes_from:
-  #     - volume_media
-  #   depends_on:
-  #     - transmission
-  #     # - jackett
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_COUCHPOTATO_HOSTNAME}
-
-  # sickchill:
-  #   image: linuxserver/sickrage
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
-  #   ports:
-  #     - 8181:8081
-  #   expose:
-  #     - 8181
-  #   links:
-  #     - transmission
-  #     - jackett
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/sickrage:/config
-  #   volumes_from:
-  #     - volume_media
-  #   depends_on:
-  #     - transmission
-  #     - jackett
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_SICKCHILL_HOSTNAME}
-  
-  
   sonarr:
     image: linuxserver/sonarr
     restart: unless-stopped
@@ -342,43 +288,6 @@ services:
       friday:
         aliases:
           - ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
-
-  # openspeedtest:
-  #   image: openspeedtest/latest:speedtest
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
-  #   ports:
-  #     - 8080:8080
-  #   expose:
-  #     - 8080    
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_OPENSPEEDTEST_HOSTNAME}
-
-  # smokeping:
-  #   image: linuxserver/smokeping
-  #   restart: unless-stopped
-  #   hostname: ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}
-  #   ports:
-  #     - 9886:80
-  #   expose:
-  #     - 9886
-  #   environment:
-  #     PGID: ${FRIDAY_CONFIG_PGID}
-  #     PUID: ${FRIDAY_CONFIG_PUID}
-  #     TZ: ${FRIDAY_TIMEZONE}
-  #   volumes:
-  #     - ${FRIDAY_ROOT}/config/smokeping:/config
-  #     - ${FRIDAY_ROOT}/config/smokeping/data:/data
-  #   volumes_from:
-  #     - volume_media
-  #   networks:
-  #     friday:
-  #       aliases:
-  #         - ${FRIDAY_NETWORK_SMOKEPING_HOSTNAME}  
 
 networks:
   friday:
