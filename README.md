@@ -41,7 +41,7 @@
 127.0.0.1 hydra.friday
 ```
 
-## Configuring included software
+## URLs
 
 :construction: This area is under construction
 
