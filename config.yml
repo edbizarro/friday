@@ -1,0 +1,39 @@
+http:
+  middlewares:
+    addprefix-pihole:
+      addPrefix:
+        prefix: "/admin"
+    
+    https-redirect:
+      redirectScheme:
+        scheme: https
+
+    default-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+          Connection: Upgrade
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers
+        
+    default-whitelist:
+      ipWhiteList:
+        sourceRange:        
+        - "127.0.0.1"
+        - "192.168.3.0/24"
+        - "172.17.0.0/12"
+        - "172.18.0.0/12"
+        - "10.10.10.0/24"

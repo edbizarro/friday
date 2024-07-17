@@ -2,15 +2,14 @@
 
 ## Included Software
 
-- Transmission
+- Qbittorrent
 - Sonarr
 - Lidarr
 - Radarr
 - Emby
 - Ombi
-- Heimdall
-- Nzbget
-- Jackett
+- Homarr
+- Prowlarr
 - Flaresolverr
 
 ## Requirements
@@ -59,7 +58,7 @@
  
  ## TO-DO
  
- - [ ] Add TRAEFIK as reverse proxy to drop ports on hostnames
+ - [x] Add TRAEFIK as reverse proxy to drop ports on hostnames
  - [ ] Add better monitoring solution (netdata?, prometheus?)
  - [ ] Make a better README
 

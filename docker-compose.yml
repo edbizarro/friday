@@ -1,4 +1,10 @@
-version: "2"
+volumes:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
+networks:
+  friday-nw:
+    driver: bridge
 
 services:
   #------------------------------------------------------------------
@@ -6,17 +12,18 @@ services:
   #------------------------------------------------------------------
 
   volume_media:
-    image: tianon/true
+    image: busybox
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
     volumes:
       - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
-      - ${FRIDAY_LOCATION_TVSHOWS}:/tv
-      - ${FRIDAY_LOCATION_MOVIES}:/movies
-      - ${FRIDAY_LOCATION_MUSIC}:/music
-      - ${FRIDAY_LOCATION_ANIME}:/anime
+      - ${FRIDAY_LOCATION_TVSHOWS_NERV}:/tv_nerv
+      - ${FRIDAY_LOCATION_MOVIES_NERV}:/movies_nerv
+      - ${FRIDAY_LOCATION_MOVIES_NERV4K}:/movies_nerv4k
+     # - ${FRIDAY_LOCATION_MUSIC}:/music
+     # - ${FRIDAY_LOCATION_ANIME}:/anime
       - ${FRIDAY_ROOT}/config:/config
       - /etc/localtime:/etc/localtime:ro
 
@@ -24,271 +31,845 @@ services:
   # Services
   #------------------------------------------------------------------
 
-  heimdall:
-    image: linuxserver/heimdall
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
-    ports:
-      - 9876:80
-    expose:
-      - 9876
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/heimdall:/config
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_HEIMDALL_HOSTNAME}
 
-  transmission:
-    image: linuxserver/transmission
+  # syncthing:
+  #   image: lscr.io/linuxserver/syncthing:latest
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_SYNCTHING_HOSTNAME}
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ${FRIDAY_ROOT}/config/syncthing/config:/config
+  #     - /mnt/dietpi_userdata/:/dietpi_userdata
+  #     - ~/.friday/config:/friday_config
+  #     - /media/mediabarbosa:/media/mediabarbosa
+  #   ports:
+  #     - 8384:8384
+  #     - 22000:22000/tcp
+  #     - 22000:22000/udp
+  #     - 21027:21027/udp
+  #   expose:
+  #     - 8384
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.syncthing.tls=true"
+  #     - "traefik.http.routers.syncthing.middlewares=traefik-https-redirect@docker, default-headers@file"
+  #     - "traefik.http.routers.syncthing.rule=Host(`syncthing.local.bizarro.tech`)"
+  #     - "traefik.http.routers.syncthing.entrypoints=https"
+  #     - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+  #     - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
+  #     - "flame.type=app"
+  #     - "flame.name=Syncthing"
+  #     - "flame.url=https://syncthing.local.bizarro.tech"
+  #   dns:
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   network_mode: host
+
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    privileged: true
     restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
-    expose:
-      - 9091
-      - 51413
+    hostname: ${FRIDAY_NETWORK_HOMEASSISTANT_HOSTNAME}
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
-      - ${FRIDAY_ROOT}/config/transmission:/config
-    volumes_from:
-      - volume_media
+      - /etc/localtime:/etc/localtime:ro
+      - ${FRIDAY_ROOT}/config/homeassistant/config:/config
+    expose:
+      - 8123
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ha.tls=true"
+      - "traefik.http.routers.ha.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.middlewares.default-headers.headers.customrequestheaders.Connection= Upgrade"
+      - "traefik.http.routers.ha.rule=Host(`ha.local.bizarro.tech`)"
+      - "traefik.http.routers.ha.entrypoints=https"
+      - "traefik.http.services.ha.loadbalancer.server.port=8123"
+      - "traefik.http.routers.ha.tls.certresolver=cloudflare"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: host
+
+  #  notifiarr:
+  #    image: golift/notifiarr
+  #    hostname: notifiarr.friday
+  #    restart: unless-stopped
+  #    volumes:
+  #      - ${FRIDAY_ROOT}/config/notifiarr:/config
+  #      - /var/run/utmp:/var/run/utmp
+  #      - /etc/machine-id:/etc/machine-id
+  #      - /etc/localtime:/etc/localtime:ro
+  #    environment:
+  #      - PGID=${FRIDAY_CONFIG_PGID}
+  #      - PUID=${FRIDAY_CONFIG_PUID}
+  #      - TZ=${FRIDAY_TIMEZONE}
+  #      - DN_API_KEY=4d41c961-34da-486b-a77a-d3f03e49c593
+  #      - DN_PROWLARR_0_NAME=prowlarr.friday
+  #      - DN_PROWLARR_0_URL=http://prowlarr.friday:9696
+  #      - DN_PROWLARR_0_API_KEY=763c4740fbbf469c8860603246087a43
+  #      - DN_RADARR_0_NAME=radarr.friday
+  #      - DN_RADARR_0_URL=http://radarr.friday:7878
+  #      - DN_RADARR_0_API_KEY=0cd163fef4494cc88b2fdf7b5081f393
+  #      - DN_SONARR_0_NAME=sonarr.friday
+  #      - DN_SONARR_0_URL=http://sonarr.friday:8989
+  #      - DN_SONARR_0_API_KEY=f4005374fa4e4364a43463a968c52cf6
+  #      - DN_QBIT_0_NAME=qbittorrent.friday
+  #      - DN_QBIT_0_URL=http://qbittorrent.friday:8090
+  #      - DN_QBIT_0_PASS=adminadmin
+  #      - DN_QBIT_0_USER=admin
+  #    ports:
+  #      - "5454:5454"
+  #    expose:
+  #      - 5454
+  #    dns:
+  #      - 1.1.1.1
+  #      - 8.8.8.8
+  #    networks:
+  #      friday-nw:
+  #        aliases:
+  #          - notifiarr.friday
+  #    labels:
+  #      - "traefik.enable=true"
+  #      - "traefik.http.routers.notifiarr.tls=true"
+  #      - "traefik.http.routers.notifiarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+  #      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.local.bizarro.tech`)"
+  #      - "traefik.http.routers.notifiarr.entrypoints=https"
+  #      - "traefik.http.services.notifiarr.loadbalancer.server.port=5454"
+  #      - "traefik.http.routers.notifiarr.tls.certresolver=cloudflare"
+  #      - "flame.type=app"
+  #      - "flame.name=Notifiarr"
+  #      - "flame.url=https://notifiarr.local.bizarro.tech"
+
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    hostname: recyclarr.friday
+    user: ${FRIDAY_CONFIG_PUID}:${FRIDAY_CONFIG_PGID}
+    volumes:
+      - ${FRIDAY_ROOT}/config/recyclarr:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=${FRIDAY_TIMEZONE}
+      - RECYCLARR_CREATE_CONFIG=true
+    labels:
+      - "traefik.enable=false"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
-          - ${FRIDAY_NETWORK_TRANSMISSION_HOSTNAME}
+          - recyclarr.friday
+
+  traefik:
+    image: traefik
+    hostname: ${FRIDAY_NETWORK_TRAEFIK_HOSTNAME}
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '8080:8080'
+      - "443:443"
+    environment:
+      - CF_API_EMAIL=edbizarro@gmail.com
+      - CF_DNS_API_TOKEN=g9G5MCLRZFyg8Y99wKGSN2fsJ2f7gS_Fo8eWPWTK
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.local.bizarro.tech`)"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=edbizarro:$$apr1$$IlFpDMBO$$sW96Rs7lKqR0i0q/JddMj."
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.local.bizarro.tech`)"
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=local.bizarro.tech"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.local.bizarro.tech"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "flame.type=app"
+      - "flame.name=Traefik"
+      - "flame.url=https://traefik-dashboard.local.bizarro.tech"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - "./acme.json:/acme.json"
+      - "./traefik.yml:/traefik.yml:ro"
+      - "./config.yml:/config.yml:ro"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_TRAEFIK_HOSTNAME}
+    extra_hosts:
+      - host.docker.internal:172.17.0.1
 
   sonarr:
-    image: linuxserver/sonarr
+    image: lscr.io/linuxserver/sonarr:arm64v8-develop
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
       - 8989:8989
-    expose:
-      - 8989
-    links:
-      - transmission
-      - jackett
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
       - ${FRIDAY_ROOT}/config/sonarr:/config
+      - /etc/localtime:/etc/localtime:ro
     volumes_from:
       - volume_media
     depends_on:
-      - transmission
-      - jackett
+      - qbittorrent
+      - prowlarr
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.http.routers.sonarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.local.bizarro.tech`)"
+      - "traefik.http.routers.sonarr.entrypoints=https"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Sonarr"
+      - "flame.url=https://sonarr.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
-  
+
   radarr:
-    image: linuxserver/radarr
+    image: lscr.io/linuxserver/radarr:arm64v8-latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
     ports:
       - 7878:7878
-    expose:
-      - 7878
-    links:
-      - transmission
-      - jackett
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/radarr:/config
     volumes_from:
       - volume_media
     depends_on:
-      - transmission
-      - jackett
+      - prowlarr
+      - qbittorrent
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.http.routers.radarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.local.bizarro.tech`)"
+      - "traefik.http.routers.radarr.entrypoints=https"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.http.routers.radarr.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Radarr"
+      - "flame.url=https://radarr.local.bizarro.tech"
+      - "flame.icon=radar"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
+
+  radarr4k:
+    image: lscr.io/linuxserver/radarr:arm64v8-latest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_RADARR4K_HOSTNAME}
+    ports:
+      - 7879:7878
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${FRIDAY_ROOT}/config/radarr4k:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - prowlarr
+      - qbittorrent
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr4k.tls=true"
+      - "traefik.http.routers.radarr4k.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.radarr4k.rule=Host(`radarr4k.local.bizarro.tech`)"
+      - "traefik.http.routers.radarr4k.entrypoints=https"
+      - "traefik.http.services.radarr4k.loadbalancer.server.port=7878"
+      - "traefik.http.routers.radarr4k.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Radarr"
+      - "flame.url=https://radarr4k.local.bizarro.tech"
+      - "flame.icon=radar"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_RADARR4K_HOSTNAME}
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:arm64v8-latest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_BAZARR_HOSTNAME}
+    ports:
+      - 6767:6767
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      #DOCKER_MODS: ghcr.io/gilbn/theme.park:bazarr
+      #TP_THEME: hotpink
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${FRIDAY_ROOT}/config/bazarr:/config
+    volumes_from:
+      - volume_media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.tls=true"
+      - "traefik.http.routers.bazarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.local.bizarro.tech`)"
+      - "traefik.http.routers.bazarr.entrypoints=https"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      - "traefik.http.routers.bazarr.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Bazarr"
+      - "flame.url=https://bazarr.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_BAZARR_HOSTNAME}
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:arm64v8-latest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_PROWLARR_HOSTNAME}
+    ports:
+      - 9696:9696
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      #DOCKER_MODS: ghcr.io/gilbn/theme.park:prowlarr
+      TP_THEME: hotpink
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${FRIDAY_ROOT}/config/prowlarr:/config
+    volumes_from:
+      - volume_media
+    depends_on:
+      - flaresolverr
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.local.bizarro.tech`)"
+      - "traefik.http.routers.prowlarr.entrypoints=https"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.http.routers.prowlarr.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Prowlarr"
+      - "flame.url=https://prowlarr.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_PROWLARR_HOSTNAME}
+
   emby:
-    image: emby/embyserver
+    image: lscr.io/linuxserver/emby:arm64v8-latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_EMBY_HOSTNAME}
     ports:
       - 8096:8096
       - 8920:8920
-    expose:
-      - 8096
-      - 8920
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
-      GIDLIST: 985
+      GIDLIST: 985,999,100,2
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:emby
+      TP_THEME: hotpink
     volumes:
-      - ${FRIDAY_ROOT}/config/emby:/config
+      - /etc/localtime:/etc/localtime:ro
+      - "${FRIDAY_ROOT}/config/emby_v2:/config"
+      - /opt/vc/lib:/opt/vc/lib
+      - /dev/dri:/dev/dri #optional
+      - /dev/vchiq:/dev/vchiq #optional
+      - /dev/video10:/dev/video10 #optional
+      - /dev/video11:/dev/video11 #optional
+      - /dev/video12:/dev/video12 #optional
+
     volumes_from:
       - volume_media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.emby.tls=true"
+      - "traefik.http.routers.emby.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.emby.rule=Host(`emby.local.bizarro.tech`)"
+      - "traefik.http.routers.emby.entrypoints=https"
+      - "traefik.http.services.emby.loadbalancer.server.port=8096"
+      - "traefik.http.routers.emby.tls.certresolver=cloudflare"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_EMBY_HOSTNAME}
 
   ombi:
-    image: linuxserver/ombi
+    image: lscr.io/linuxserver/ombi:arm64v8-development
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_OMBI_HOSTNAME}
     ports:
       - 3579:3579
-    expose:
-      - 3579
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/ombi:/config
     volumes_from:
       - volume_media
     depends_on:
       - radarr
       - sonarr
-    links:
-      - radarr
-      - sonarr
+      - lidarr
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ombi.tls=true"
+      - "traefik.http.routers.ombi.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.ombi.rule=Host(`ombi.local.bizarro.tech`)"
+      - "traefik.http.routers.ombi.entrypoints=https"
+      - "traefik.http.services.ombi.loadbalancer.server.port=3579"
+      - "traefik.http.routers.ombi.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Ombi"
+      - "flame.url=https://ombi.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
 
   lidarr:
-    image: linuxserver/lidarr
+    image: lscr.io/linuxserver/lidarr:arm64v8-latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
     ports:
       - 8686:8686
-    expose:
-      - 8686
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
+      DOCKER_MODS: ghcr.io/gilbn/theme.park:lidarr
+      TP_THEME: hotpink
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/lidarr:/config
     volumes_from:
       - volume_media
     depends_on:
-      - transmission
-      - jackett
+      - prowlarr
+      - qbittorrent
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lidarr.tls=true"
+      - "traefik.http.routers.lidarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.local.bizarro.tech`)"
+      - "traefik.http.routers.lidarr.entrypoints=https"
+      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+      - "traefik.http.routers.lidarr.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Lidarr"
+      - "flame.url=https://lidarr.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
-  nzbget:
-    image: linuxserver/nzbget
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
-    ports:
-      - 6789:6789
-    expose:
-      - 6789
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/nzbget:/config
-    volumes_from:
-      - volume_media
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_NZBGET_HOSTNAME}
 
-  hydra:
-    image: linuxserver/nzbhydra2
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+  netdata:
+    image: netdata/netdata
+    privileged: true
+    hostname: melchior-magi-1
     ports:
-      - 5076:5076
-    expose:
-      - 5076
+      - 19999:19999
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+    pid: "host"
+    security_opt:
+      - apparmor:unconfined
     environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
+      NETDATA_CLAIM_TOKEN: SAQ9f_aTPKSR4opgcSpAGuqhr3K6Z17N8Br_vtF6nx_EFL0Bi20pukH_52pN6uujOvMFsFQsAi0KTwg4GWRCzNYlMX_8clKgBVO9MzaqNqRzrJ8pB7JdlE6IZsln8PQmDPycSRI
+      NETDATA_CLAIM_URL: https://app.netdata.cloud
+      PGID: 124
       TZ: ${FRIDAY_TIMEZONE}
+      DOCKER_USR: root
+      DOCKER_GRP: root
     volumes:
-      - ${FRIDAY_ROOT}/config/hydra:/config
-    volumes_from:
-      - volume_media
-    depends_on:
-      - transmission
-      - jackett
-    links:
-      - transmission
-      - jackett
-    networks:
-      friday:
-        aliases:
-          - ${FRIDAY_NETWORK_HYDRA_HOSTNAME}
+      - netdatacache:/var/cache/netdata
+      - netdataconfig:/etc/netdata
+      - netdatalib:/var/lib/netdata
 
-  jackett:
-    image: linuxserver/jackett
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
-    ports:
-      - 9117:9117
-    expose:
-      - 9117
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-    volumes:
-      - ${FRIDAY_ROOT}/config/jackett:/config
-      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
-    volumes_from:
-      - volume_media
+      - /etc/group:/host/etc/group:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/passwd:/host/etc/passwd:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.netdata.tls=true"
+      - "traefik.http.routers.netdata.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.netdata.rule=Host(`netdata.local.bizarro.tech`)"
+      - "traefik.http.routers.netdata.entrypoints=https"
+      - "traefik.http.services.netdata.loadbalancer.server.port=19999"
+      - "traefik.http.routers.netdata.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Netdata"
+      - "flame.url=https://netdata.local.bizarro.tech"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
-          - ${FRIDAY_NETWORK_JACKETT_HOSTNAME}
-  
+          - ${FRIDAY_NETWORK_NETDATA_HOSTNAME}
+
   flaresolverr:
     image: flaresolverr/flaresolverr
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
     ports:
       - 8191:8191
-    expose:
-      - 8191
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
       LOG_LEVEL: info
-      CAPTCHA_SOLVER: hcaptcha-solver
     volumes:
       - ${FRIDAY_ROOT}/config/flaresolverr:/config
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/downloads
     volumes_from:
       - volume_media
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
-      friday:
+      friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
 
-networks:
-  friday:
-    driver: bridge
+  pihole:
+    image: pihole/pihole
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8022:80/tcp"
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      DNSMASQ_USER: 'root'
+      DNSSEC: 'false'
+      FTLCONF_CHECK_LOAD: 'false'
+      FTLCONF_LOCAL_IPV4: 10.10.10.82
+      #PIHOLE_DNS_: '1.1.1.1;8.8.8.8;208.67.222.222'
+      FTLCONF_RATE_LIMIT: '0/0'
+      REPLY_ADDR4: 10.10.10.82
+      REPLY_WHEN_BUSY: 'ALLOW'
+      TEMPERATUREUNIT: 'c'
+      VIRTUAL_HOST: "pihole.local.bizarro.tech"
+      WEBPASSWORD: '321456987'
+      RATE_LIMIT: '0/0'
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+      - 9.9.9.9
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${FRIDAY_ROOT}/config/pihole:/etc/pihole/:rw
+      - ${FRIDAY_ROOT}/config/pihole/etc-dnsmasq.d:/etc/dnsmasq.d/
+      - ./whitelist:/etc/whitelist:ro
+    volumes_from:
+      - volume_media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.middlewares=traefik-https-redirect@docker, addprefix-pihole@file, default-headers@file"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.local.bizarro.tech`)"
+      - "traefik.http.routers.pihole.entrypoints=https"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Pi Hole"
+      - "flame.url=https://pihole.local.bizarro.tech"
+      - "flame.icon=pi-hole"
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
+
+  # duplicati:
+  #   image: lscr.io/linuxserver/duplicati:arm64v8-latest
+  #   hostname: ${FRIDAY_NETWORK_DUPLICATI_HOSTNAME}
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/duplicati:/config
+  #     - /home/pi:/source
+  #     - /media/mediabarbosa:/mediabarbosa
+  #   ports:
+  #     - 8200:8200
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.duplicati.tls=true"
+  #     - "traefik.http.routers.duplicati.middlewares=traefik-https-redirect@docker, default-headers@file"
+  #     - "traefik.http.routers.duplicati.rule=Host(`duplicati.local.bizarro.tech`)"
+  #     - "traefik.http.routers.duplicati.entrypoints=https"
+  #     - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
+  #     - "traefik.http.routers.duplicati.tls.certresolver=cloudflare"
+  #     - "flame.type=app"
+  #     - "flame.name=Duplicati"
+  #     - "flame.url=https://duplicati.local.bizarro.tech"
+  #   dns:
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   networks:
+  #     friday-nw:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_DUPLICATI_HOSTNAME}
+
+  grocy:
+    image: lscr.io/linuxserver/grocy:arm64v8-latest
+    hostname: ${FRIDAY_NETWORK_GROCY_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      GROCY_CURRENCY: 'BRL'
+    volumes:
+      - ${FRIDAY_ROOT}/config/grocy2:/config
+    ports:
+      - 8011:80
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grocy.tls=true"
+      - "traefik.http.routers.grocy.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.grocy.rule=Host(`grocy.local.bizarro.tech`)"
+      - "traefik.http.routers.grocy.entrypoints=https"
+      - "traefik.http.services.grocy.loadbalancer.server.port=80"
+      - "traefik.http.routers.grocy.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=Grocy"
+      - "flame.url=https://grocy.local.bizarro.tech"
+      - "flame.icon=basket"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_GROCY_HOSTNAME}
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:arm64v8-latest
+    restart: unless-stopped
+    hostname: ${FRIDAY_NETWORK_QBITTORRENT_HOSTNAME}
+    volumes:
+      - ${FRIDAY_ROOT}/config/qbittorrent:/config
+    volumes_from:
+      - volume_media
+    ports:
+      - 8090:8090
+      - 6881:6881
+      - 6881:6881/udp
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+      WEBUI_PORT: 8090
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.tls=true"
+      - "traefik.http.routers.qbittorrent.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.local.bizarro.tech`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=https"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8090"
+      - "traefik.http.routers.qbittorrent.tls.certresolver=cloudflare"
+      - "flame.type=app"
+      - "flame.name=qBittorrent"
+      - "flame.url=https://qbittorrent.local.bizarro.tech"
+      - "flame.icon=qbittorrent"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_QBITTORRENT_HOSTNAME}
+
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    hostname: ${FRIDAY_NETWORK_KUMA_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/uptime-kuma:/app/data
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    ports:
+      - 3001:3001
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime.tls=true"
+      - "traefik.http.routers.uptime.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.uptime.rule=Host(`uptime.local.bizarro.tech`)"
+      - "traefik.http.routers.uptime.entrypoints=https"
+      - "traefik.http.services.uptime.loadbalancer.server.port=3001"
+      - "traefik.http.routers.uptime.tls.certresolver=cloudflare"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_KUMA_HOSTNAME}
+
+  myspeed:
+    image: germannewsmaker/myspeed
+    hostname: ${FRIDAY_NETWORK_MYSPEED_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/myspeed:/myspeed/data
+    ports:
+      - 5216:5216
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myspeed.tls=true"
+      - "traefik.http.routers.myspeed.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.myspeed.rule=Host(`myspeed.local.bizarro.tech`)"
+      - "traefik.http.routers.myspeed.entrypoints=https"
+      - "traefik.http.services.myspeed.loadbalancer.server.port=5216"
+      - "traefik.http.routers.myspeed.tls.certresolver=cloudflare"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_MYSPEED_HOSTNAME}
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    hostname: ${FRIDAY_NETWORK_HOMEPAGE_HOSTNAME}
+    environment:
+      PGID: ${FRIDAY_CONFIG_PGID}
+      PUID: ${FRIDAY_CONFIG_PUID}
+      TZ: ${FRIDAY_TIMEZONE}
+    volumes:
+      - ${FRIDAY_ROOT}/config/homepage:/app/config
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    volumes_from:
+      - volume_media
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.tls=true"
+      - "traefik.http.routers.homepage.middlewares=traefik-https-redirect@docker, default-headers@file"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.local.bizarro.tech`)"
+      - "traefik.http.routers.homepage.entrypoints=https"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      friday-nw:
+        aliases:
+          - ${FRIDAY_NETWORK_HOMEPAGE_HOSTNAME}
+  # tdarr:
+  #   privileged: true
+  #   hostname: ${FRIDAY_NETWORK_TDARR_HOSTNAME}
+  #   image: ghcr.io/haveagitgat/tdarr:latest
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8265:8265 # webUI port
+  #     - 8266:8266 # server port
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #     UMASK_SET: 002
+  #     serverIP: 0.0.0.0
+  #     serverPort: 8266
+  #     webUIPort: 8265
+  #     internalNode: true
+  #     nodeID: "melchior-magi-1"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.tdarr.tls=true"
+  #     - "traefik.http.routers.tdarr.middlewares=traefik-https-redirect@docker, default-headers@file"
+  #     - "traefik.http.routers.tdarr.rule=Host(`tdarr.local.bizarro.tech`)"
+  #     - "traefik.http.routers.tdarr.entrypoints=https"
+  #     - "traefik.http.services.tdarr.loadbalancer.server.port=8265"
+  #     - "traefik.http.routers.tdarr.tls.certresolver=cloudflare"
+  #   volumes:
+  #     - ${FRIDAY_ROOT}/config/tdarr/configs:/app/configs
+  #     - ${FRIDAY_ROOT}/config/tdarr/server:/app/server
+  #     - ${FRIDAY_ROOT}/config/tdarr/logs:/app/logs
+  #     - /media/mediabarbosa:/media
+  #   networks:
+  #     friday-nw:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_TDARR_HOSTNAME}
