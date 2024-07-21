@@ -53,24 +53,31 @@
 
 ## URLs
 
+### Hosts files
+
 :construction: This area is under construction
 
- - Heimdall URL: http://heimdall.friday:9876
  - Ombi URL: http://ombi.friday:3579
- - Transmission URL: http://transmission.friday:9091
  - Emby URL: http://emby.friday:8096
  - Sonarr URL: http://sickchill.friday:8989
  - Radarr URL: http://radarr.friday:7878
  - Lidarr URL: http://lidarr.friday:8686
- - Jackett URL: http://jackett.friday:9117
- - Hydra2 URL: http://hydra.friday:5076
- - Nzbget URL: http://nzbget.friday:6789
  - Flaresolverr URL: http://flaresolverr.friday:8191
+
+### Traefik (replace the domain with your own)
+
+:construction: This area is under construction
+
+ - Ombi URL: https://ombi.local.bizarro.tech
+ - Emby URL: https://emby.local.bizarro.tech
+ - Sonarr URL: https://sonarr.local.bizarro.tech
+ - Radarr URL: https://radarr.local.bizarro.tech
+ - Lidarr URL: https://lidarr.local.bizarro.tech
 
  ## TO-DO
 
  - [x] Add TRAEFIK as reverse proxy to drop ports on hostnames
- - [ ] Add better monitoring solution (netdata?, prometheus?)
+ - [ ] Add better monitoring solution (netdata?, prometheus+grafana?)
  - [ ] Make a better README
 
  ---
