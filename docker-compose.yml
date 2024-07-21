@@ -177,7 +177,7 @@ services:
       - "443:443"
     environment:
       - CF_API_EMAIL=edbizarro@gmail.com
-      - CF_DNS_API_TOKEN=g9G5MCLRZFyg8Y99wKGSN2fsJ2f7gS_Fo8eWPWTK
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
