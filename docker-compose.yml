@@ -531,8 +531,8 @@ services:
     security_opt:
       - apparmor:unconfined
     environment:
-      NETDATA_CLAIM_TOKEN: SAQ9f_aTPKSR4opgcSpAGuqhr3K6Z17N8Br_vtF6nx_EFL0Bi20pukH_52pN6uujOvMFsFQsAi0KTwg4GWRCzNYlMX_8clKgBVO9MzaqNqRzrJ8pB7JdlE6IZsln8PQmDPycSRI
-      NETDATA_CLAIM_URL: https://app.netdata.cloud
+      NETDATA_CLAIM_TOKEN: ${NETDATA_CLAIM_TOKEN}
+      NETDATA_CLAIM_URL: ${NETDATA_CLAIM_URL}
       PGID: 124
       TZ: ${FRIDAY_TIMEZONE}
       DOCKER_USR: root
