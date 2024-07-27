@@ -1,2 +1,5 @@
 .env
 acme.json
+config/
+downloads/
+downloads/*

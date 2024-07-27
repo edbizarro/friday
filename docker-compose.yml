@@ -19,11 +19,11 @@ services:
     volumes:
       - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
       - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
-      - ${FRIDAY_LOCATION_TVSHOWS_NERV}:/tv_nerv
-      - ${FRIDAY_LOCATION_MOVIES_NERV}:/movies_nerv
-      - ${FRIDAY_LOCATION_MOVIES_NERV4K}:/movies_nerv4k
-     # - ${FRIDAY_LOCATION_MUSIC}:/music
-     # - ${FRIDAY_LOCATION_ANIME}:/anime
+      - ${FRIDAY_LOCATION_TVSHOWS}:/tv
+      - ${FRIDAY_LOCATION_MOVIES}:/movies
+      - ${FRIDAY_LOCATION_MOVIES4K}:/movies4k
+      - ${FRIDAY_LOCATION_MUSIC}:/music
+      - ${FRIDAY_LOCATION_ANIME}:/anime
       - ${FRIDAY_ROOT}/config:/config
       - /etc/localtime:/etc/localtime:ro
 
@@ -57,13 +57,13 @@ services:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.syncthing.tls=true"
   #     - "traefik.http.routers.syncthing.middlewares=traefik-https-redirect@docker, default-headers@file"
-  #     - "traefik.http.routers.syncthing.rule=Host(`syncthing.local.bizarro.tech`)"
+  #     - "traefik.http.routers.syncthing.rule=Host(`syncthing.nerv.bizarro.tech`)"
   #     - "traefik.http.routers.syncthing.entrypoints=https"
   #     - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
   #     - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
   #     - "flame.type=app"
   #     - "flame.name=Syncthing"
-  #     - "flame.url=https://syncthing.local.bizarro.tech"
+  #     - "flame.url=https://syncthing.nerv.bizarro.tech"
   #   dns:
   #     - 1.1.1.1
   #     - 8.8.8.8
@@ -88,7 +88,7 @@ services:
       - "traefik.http.routers.ha.tls=true"
       - "traefik.http.routers.ha.middlewares=traefik-https-redirect@docker, default-headers@file"
       - "traefik.http.middlewares.default-headers.headers.customrequestheaders.Connection= Upgrade"
-      - "traefik.http.routers.ha.rule=Host(`ha.local.bizarro.tech`)"
+      - "traefik.http.routers.ha.rule=Host(`ha.nerv.bizarro.tech`)"
       - "traefik.http.routers.ha.entrypoints=https"
       - "traefik.http.services.ha.loadbalancer.server.port=8123"
       - "traefik.http.routers.ha.tls.certresolver=cloudflare"
@@ -139,13 +139,13 @@ services:
   #      - "traefik.enable=true"
   #      - "traefik.http.routers.notifiarr.tls=true"
   #      - "traefik.http.routers.notifiarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-  #      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.local.bizarro.tech`)"
+  #      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.nerv.bizarro.tech`)"
   #      - "traefik.http.routers.notifiarr.entrypoints=https"
   #      - "traefik.http.services.notifiarr.loadbalancer.server.port=5454"
   #      - "traefik.http.routers.notifiarr.tls.certresolver=cloudflare"
   #      - "flame.type=app"
   #      - "flame.name=Notifiarr"
-  #      - "flame.url=https://notifiarr.local.bizarro.tech"
+  #      - "flame.url=https://notifiarr.nerv.bizarro.tech"
 
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr
@@ -181,22 +181,22 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.local.bizarro.tech`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.nerv.bizarro.tech`)"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=edbizarro:$$apr1$$IlFpDMBO$$sW96Rs7lKqR0i0q/JddMj."
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.local.bizarro.tech`)"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.nerv.bizarro.tech`)"
       - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
       - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=local.bizarro.tech"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.local.bizarro.tech"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=nerv.bizarro.tech"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.nerv.bizarro.tech"
       - "traefik.http.routers.traefik-secure.service=api@internal"
       - "flame.type=app"
       - "flame.name=Traefik"
-      - "flame.url=https://traefik-dashboard.local.bizarro.tech"
+      - "flame.url=https://traefik-dashboard.nerv.bizarro.tech"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
@@ -214,7 +214,7 @@ services:
       - host.docker.internal:172.17.0.1
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:arm64v8-develop
+    image: lscr.io/linuxserver/sonarr:develop
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_SONARR_HOSTNAME}
     ports:
@@ -235,13 +235,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.tls=true"
       - "traefik.http.routers.sonarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.local.bizarro.tech`)"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.nerv.bizarro.tech`)"
       - "traefik.http.routers.sonarr.entrypoints=https"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
       - "traefik.http.routers.sonarr.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Sonarr"
-      - "flame.url=https://sonarr.local.bizarro.tech"
+      - "flame.url=https://sonarr.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -251,7 +251,7 @@ services:
           - ${FRIDAY_NETWORK_SONARR_HOSTNAME}
 
   radarr:
-    image: lscr.io/linuxserver/radarr:arm64v8-latest
+    image: lscr.io/linuxserver/radarr:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_RADARR_HOSTNAME}
     ports:
@@ -272,13 +272,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.tls=true"
       - "traefik.http.routers.radarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.radarr.rule=Host(`radarr.local.bizarro.tech`)"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.nerv.bizarro.tech`)"
       - "traefik.http.routers.radarr.entrypoints=https"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
       - "traefik.http.routers.radarr.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Radarr"
-      - "flame.url=https://radarr.local.bizarro.tech"
+      - "flame.url=https://radarr.nerv.bizarro.tech"
       - "flame.icon=radar"
     dns:
       - 1.1.1.1
@@ -289,7 +289,7 @@ services:
           - ${FRIDAY_NETWORK_RADARR_HOSTNAME}
 
   radarr4k:
-    image: lscr.io/linuxserver/radarr:arm64v8-latest
+    image: lscr.io/linuxserver/radarr:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_RADARR4K_HOSTNAME}
     ports:
@@ -310,13 +310,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr4k.tls=true"
       - "traefik.http.routers.radarr4k.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.radarr4k.rule=Host(`radarr4k.local.bizarro.tech`)"
+      - "traefik.http.routers.radarr4k.rule=Host(`radarr4k.nerv.bizarro.tech`)"
       - "traefik.http.routers.radarr4k.entrypoints=https"
       - "traefik.http.services.radarr4k.loadbalancer.server.port=7878"
       - "traefik.http.routers.radarr4k.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Radarr"
-      - "flame.url=https://radarr4k.local.bizarro.tech"
+      - "flame.url=https://radarr4k.nerv.bizarro.tech"
       - "flame.icon=radar"
     dns:
       - 1.1.1.1
@@ -327,7 +327,7 @@ services:
           - ${FRIDAY_NETWORK_RADARR4K_HOSTNAME}
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:arm64v8-latest
+    image: lscr.io/linuxserver/bazarr:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_BAZARR_HOSTNAME}
     ports:
@@ -347,13 +347,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.tls=true"
       - "traefik.http.routers.bazarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.bazarr.rule=Host(`bazarr.local.bizarro.tech`)"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.nerv.bizarro.tech`)"
       - "traefik.http.routers.bazarr.entrypoints=https"
       - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
       - "traefik.http.routers.bazarr.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Bazarr"
-      - "flame.url=https://bazarr.local.bizarro.tech"
+      - "flame.url=https://bazarr.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -363,7 +363,7 @@ services:
           - ${FRIDAY_NETWORK_BAZARR_HOSTNAME}
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:arm64v8-latest
+    image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_PROWLARR_HOSTNAME}
     ports:
@@ -385,13 +385,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.tls=true"
       - "traefik.http.routers.prowlarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.local.bizarro.tech`)"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.nerv.bizarro.tech`)"
       - "traefik.http.routers.prowlarr.entrypoints=https"
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
       - "traefik.http.routers.prowlarr.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Prowlarr"
-      - "flame.url=https://prowlarr.local.bizarro.tech"
+      - "flame.url=https://prowlarr.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -401,7 +401,7 @@ services:
           - ${FRIDAY_NETWORK_PROWLARR_HOSTNAME}
 
   emby:
-    image: lscr.io/linuxserver/emby:arm64v8-latest
+    image: lscr.io/linuxserver/emby:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_EMBY_HOSTNAME}
     ports:
@@ -411,12 +411,10 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
-      GIDLIST: 985,999,100,2
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:emby
-      TP_THEME: hotpink
+      GIDLIST: 44,105,109
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - "${FRIDAY_ROOT}/config/emby_v2:/config"
+      - "${FRIDAY_ROOT}/config/emby:/config"
       - /opt/vc/lib:/opt/vc/lib
       - /dev/dri:/dev/dri #optional
       - /dev/vchiq:/dev/vchiq #optional
@@ -430,7 +428,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.emby.tls=true"
       - "traefik.http.routers.emby.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.emby.rule=Host(`emby.local.bizarro.tech`)"
+      - "traefik.http.routers.emby.rule=Host(`emby.nerv.bizarro.tech`)"
       - "traefik.http.routers.emby.entrypoints=https"
       - "traefik.http.services.emby.loadbalancer.server.port=8096"
       - "traefik.http.routers.emby.tls.certresolver=cloudflare"
@@ -443,7 +441,7 @@ services:
           - ${FRIDAY_NETWORK_EMBY_HOSTNAME}
 
   ombi:
-    image: lscr.io/linuxserver/ombi:arm64v8-development
+    image: lscr.io/linuxserver/ombi:development
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_OMBI_HOSTNAME}
     ports:
@@ -465,13 +463,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ombi.tls=true"
       - "traefik.http.routers.ombi.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.ombi.rule=Host(`ombi.local.bizarro.tech`)"
+      - "traefik.http.routers.ombi.rule=Host(`ombi.nerv.bizarro.tech`)"
       - "traefik.http.routers.ombi.entrypoints=https"
       - "traefik.http.services.ombi.loadbalancer.server.port=3579"
       - "traefik.http.routers.ombi.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Ombi"
-      - "flame.url=https://ombi.local.bizarro.tech"
+      - "flame.url=https://ombi.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -481,7 +479,7 @@ services:
           - ${FRIDAY_NETWORK_OMBI_HOSTNAME}
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:arm64v8-latest
+    image: lscr.io/linuxserver/lidarr:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_LIDARR_HOSTNAME}
     ports:
@@ -503,13 +501,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.lidarr.tls=true"
       - "traefik.http.routers.lidarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.lidarr.rule=Host(`lidarr.local.bizarro.tech`)"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.nerv.bizarro.tech`)"
       - "traefik.http.routers.lidarr.entrypoints=https"
       - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
       - "traefik.http.routers.lidarr.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Lidarr"
-      - "flame.url=https://lidarr.local.bizarro.tech"
+      - "flame.url=https://lidarr.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -521,18 +519,20 @@ services:
   netdata:
     image: netdata/netdata
     privileged: true
-    hostname: melchior-magi-1
+    hostname: NERV
     ports:
       - 19999:19999
     restart: unless-stopped
     cap_add:
       - SYS_PTRACE
+      - SYS_ADMIN
     pid: "host"
     security_opt:
       - apparmor:unconfined
     environment:
       NETDATA_CLAIM_TOKEN: ${NETDATA_CLAIM_TOKEN}
       NETDATA_CLAIM_URL: ${NETDATA_CLAIM_URL}
+      NETDATA_CLAIM_ROOMS: ${NETDATA_CLAIM_ROOMS}
       PGID: 124
       TZ: ${FRIDAY_TIMEZONE}
       DOCKER_USR: root
@@ -542,24 +542,26 @@ services:
       - netdataconfig:/etc/netdata
       - netdatalib:/var/lib/netdata
 
+      - /:/host/root:ro,rslave
       - /etc/group:/host/etc/group:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /etc/passwd:/host/etc/passwd:ro
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
+      - /var/log:/host/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.netdata.tls=true"
       - "traefik.http.routers.netdata.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.netdata.rule=Host(`netdata.local.bizarro.tech`)"
+      - "traefik.http.routers.netdata.rule=Host(`netdata.nerv.bizarro.tech`)"
       - "traefik.http.routers.netdata.entrypoints=https"
       - "traefik.http.services.netdata.loadbalancer.server.port=19999"
       - "traefik.http.routers.netdata.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Netdata"
-      - "flame.url=https://netdata.local.bizarro.tech"
+      - "flame.url=https://netdata.nerv.bizarro.tech"
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -592,63 +594,63 @@ services:
         aliases:
           - ${FRIDAY_NETWORK_FLARESOLVERR_HOSTNAME}
 
-  pihole:
-    image: pihole/pihole
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-    hostname: ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "67:67/udp"
-      - "8022:80/tcp"
-    environment:
-      PGID: ${FRIDAY_CONFIG_PGID}
-      PUID: ${FRIDAY_CONFIG_PUID}
-      TZ: ${FRIDAY_TIMEZONE}
-      DNSMASQ_USER: 'root'
-      DNSSEC: 'false'
-      FTLCONF_CHECK_LOAD: 'false'
-      FTLCONF_LOCAL_IPV4: 10.10.10.82
-      #PIHOLE_DNS_: '1.1.1.1;8.8.8.8;208.67.222.222'
-      FTLCONF_RATE_LIMIT: '0/0'
-      REPLY_ADDR4: 10.10.10.82
-      REPLY_WHEN_BUSY: 'ALLOW'
-      TEMPERATUREUNIT: 'c'
-      VIRTUAL_HOST: "pihole.local.bizarro.tech"
-      WEBPASSWORD: '321456987'
-      RATE_LIMIT: '0/0'
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-      - 9.9.9.9
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${FRIDAY_ROOT}/config/pihole:/etc/pihole/:rw
-      - ${FRIDAY_ROOT}/config/pihole/etc-dnsmasq.d:/etc/dnsmasq.d/
-      - ./whitelist:/etc/whitelist:ro
-    volumes_from:
-      - volume_media
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pihole.tls=true"
-      - "traefik.http.routers.pihole.middlewares=traefik-https-redirect@docker, addprefix-pihole@file, default-headers@file"
-      - "traefik.http.routers.pihole.rule=Host(`pihole.local.bizarro.tech`)"
-      - "traefik.http.routers.pihole.entrypoints=https"
-      - "traefik.http.services.pihole.loadbalancer.server.port=80"
-      - "traefik.http.routers.pihole.tls.certresolver=cloudflare"
-      - "flame.type=app"
-      - "flame.name=Pi Hole"
-      - "flame.url=https://pihole.local.bizarro.tech"
-      - "flame.icon=pi-hole"
-    networks:
-      friday-nw:
-        aliases:
-          - ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
+  # pihole:
+  #   image: pihole/pihole
+  #   cap_add:
+  #     - NET_ADMIN
+  #   restart: unless-stopped
+  #   hostname: ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
+  #   ports:
+  #     - "53:53/tcp"
+  #     - "53:53/udp"
+  #     - "67:67/udp"
+  #     - "8022:80/tcp"
+  #   environment:
+  #     PGID: ${FRIDAY_CONFIG_PGID}
+  #     PUID: ${FRIDAY_CONFIG_PUID}
+  #     TZ: ${FRIDAY_TIMEZONE}
+  #     DNSMASQ_USER: 'root'
+  #     DNSSEC: 'false'
+  #     FTLCONF_CHECK_LOAD: 'false'
+  #     FTLCONF_LOCAL_IPV4: 10.10.10.82
+  #     #PIHOLE_DNS_: '1.1.1.1;8.8.8.8;208.67.222.222'
+  #     FTLCONF_RATE_LIMIT: '0/0'
+  #     REPLY_ADDR4: 10.10.10.82
+  #     REPLY_WHEN_BUSY: 'ALLOW'
+  #     TEMPERATUREUNIT: 'c'
+  #     VIRTUAL_HOST: "pihole.nerv.bizarro.tech"
+  #     WEBPASSWORD: '321456987'
+  #     RATE_LIMIT: '0/0'
+  #   dns:
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #     - 9.9.9.9
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ${FRIDAY_ROOT}/config/pihole:/etc/pihole/:rw
+  #     - ${FRIDAY_ROOT}/config/pihole/etc-dnsmasq.d:/etc/dnsmasq.d/
+  #     - ./whitelist:/etc/whitelist:ro
+  #   volumes_from:
+  #     - volume_media
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.pihole.tls=true"
+  #     - "traefik.http.routers.pihole.middlewares=traefik-https-redirect@docker, addprefix-pihole@file, default-headers@file"
+  #     - "traefik.http.routers.pihole.rule=Host(`pihole.nerv.bizarro.tech`)"
+  #     - "traefik.http.routers.pihole.entrypoints=https"
+  #     - "traefik.http.services.pihole.loadbalancer.server.port=80"
+  #     - "traefik.http.routers.pihole.tls.certresolver=cloudflare"
+  #     - "flame.type=app"
+  #     - "flame.name=Pi Hole"
+  #     - "flame.url=https://pihole.nerv.bizarro.tech"
+  #     - "flame.icon=pi-hole"
+  #   networks:
+  #     friday-nw:
+  #       aliases:
+  #         - ${FRIDAY_NETWORK_PIHOLE_HOSTNAME}
 
   # duplicati:
-  #   image: lscr.io/linuxserver/duplicati:arm64v8-latest
+  #   image: lscr.io/linuxserver/duplicati:latest
   #   hostname: ${FRIDAY_NETWORK_DUPLICATI_HOSTNAME}
   #   environment:
   #     PGID: ${FRIDAY_CONFIG_PGID}
@@ -665,13 +667,13 @@ services:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.duplicati.tls=true"
   #     - "traefik.http.routers.duplicati.middlewares=traefik-https-redirect@docker, default-headers@file"
-  #     - "traefik.http.routers.duplicati.rule=Host(`duplicati.local.bizarro.tech`)"
+  #     - "traefik.http.routers.duplicati.rule=Host(`duplicati.nerv.bizarro.tech`)"
   #     - "traefik.http.routers.duplicati.entrypoints=https"
   #     - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
   #     - "traefik.http.routers.duplicati.tls.certresolver=cloudflare"
   #     - "flame.type=app"
   #     - "flame.name=Duplicati"
-  #     - "flame.url=https://duplicati.local.bizarro.tech"
+  #     - "flame.url=https://duplicati.nerv.bizarro.tech"
   #   dns:
   #     - 1.1.1.1
   #     - 8.8.8.8
@@ -681,7 +683,7 @@ services:
   #         - ${FRIDAY_NETWORK_DUPLICATI_HOSTNAME}
 
   grocy:
-    image: lscr.io/linuxserver/grocy:arm64v8-latest
+    image: lscr.io/linuxserver/grocy:latest
     hostname: ${FRIDAY_NETWORK_GROCY_HOSTNAME}
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
@@ -697,13 +699,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.grocy.tls=true"
       - "traefik.http.routers.grocy.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.grocy.rule=Host(`grocy.local.bizarro.tech`)"
+      - "traefik.http.routers.grocy.rule=Host(`grocy.nerv.bizarro.tech`)"
       - "traefik.http.routers.grocy.entrypoints=https"
       - "traefik.http.services.grocy.loadbalancer.server.port=80"
       - "traefik.http.routers.grocy.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=Grocy"
-      - "flame.url=https://grocy.local.bizarro.tech"
+      - "flame.url=https://grocy.nerv.bizarro.tech"
       - "flame.icon=basket"
     dns:
       - 1.1.1.1
@@ -714,7 +716,7 @@ services:
           - ${FRIDAY_NETWORK_GROCY_HOSTNAME}
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:arm64v8-latest
+    image: lscr.io/linuxserver/qbittorrent:latest
     restart: unless-stopped
     hostname: ${FRIDAY_NETWORK_QBITTORRENT_HOSTNAME}
     volumes:
@@ -735,13 +737,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.qbittorrent.tls=true"
       - "traefik.http.routers.qbittorrent.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.local.bizarro.tech`)"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.nerv.bizarro.tech`)"
       - "traefik.http.routers.qbittorrent.entrypoints=https"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8090"
       - "traefik.http.routers.qbittorrent.tls.certresolver=cloudflare"
       - "flame.type=app"
       - "flame.name=qBittorrent"
-      - "flame.url=https://qbittorrent.local.bizarro.tech"
+      - "flame.url=https://qbittorrent.nerv.bizarro.tech"
       - "flame.icon=qbittorrent"
     dns:
       - 1.1.1.1
@@ -768,7 +770,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.uptime.tls=true"
       - "traefik.http.routers.uptime.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.uptime.rule=Host(`uptime.local.bizarro.tech`)"
+      - "traefik.http.routers.uptime.rule=Host(`uptime.nerv.bizarro.tech`)"
       - "traefik.http.routers.uptime.entrypoints=https"
       - "traefik.http.services.uptime.loadbalancer.server.port=3001"
       - "traefik.http.routers.uptime.tls.certresolver=cloudflare"
@@ -796,7 +798,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.myspeed.tls=true"
       - "traefik.http.routers.myspeed.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.myspeed.rule=Host(`myspeed.local.bizarro.tech`)"
+      - "traefik.http.routers.myspeed.rule=Host(`myspeed.nerv.bizarro.tech`)"
       - "traefik.http.routers.myspeed.entrypoints=https"
       - "traefik.http.services.myspeed.loadbalancer.server.port=5216"
       - "traefik.http.routers.myspeed.tls.certresolver=cloudflare"
@@ -827,7 +829,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.homepage.tls=true"
       - "traefik.http.routers.homepage.middlewares=traefik-https-redirect@docker, default-headers@file"
-      - "traefik.http.routers.homepage.rule=Host(`homepage.local.bizarro.tech`)"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.nerv.bizarro.tech`)"
       - "traefik.http.routers.homepage.entrypoints=https"
       - "traefik.http.services.homepage.loadbalancer.server.port=3000"
       - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
@@ -860,7 +862,7 @@ services:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.tdarr.tls=true"
   #     - "traefik.http.routers.tdarr.middlewares=traefik-https-redirect@docker, default-headers@file"
-  #     - "traefik.http.routers.tdarr.rule=Host(`tdarr.local.bizarro.tech`)"
+  #     - "traefik.http.routers.tdarr.rule=Host(`tdarr.nerv.bizarro.tech`)"
   #     - "traefik.http.routers.tdarr.entrypoints=https"
   #     - "traefik.http.services.tdarr.loadbalancer.server.port=8265"
   #     - "traefik.http.routers.tdarr.tls.certresolver=cloudflare"
