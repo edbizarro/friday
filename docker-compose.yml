@@ -17,13 +17,13 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
     volumes:
-      - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
-      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
-      - ${FRIDAY_LOCATION_TVSHOWS}:/tv
+      - ${FRIDAY_LOCATION_ANIME}:/anime
       - ${FRIDAY_LOCATION_MOVIES}:/movies
       - ${FRIDAY_LOCATION_MOVIES4K}:/movies4k
       - ${FRIDAY_LOCATION_MUSIC}:/music
-      - ${FRIDAY_LOCATION_ANIME}:/anime
+      - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
+      - ${FRIDAY_LOCATION_TORRENT_WATCH}:/watch
+      - ${FRIDAY_LOCATION_TVSHOWS}:/tv
       - ${FRIDAY_ROOT}/config:/config
       - /etc/localtime:/etc/localtime:ro
 
@@ -336,8 +336,6 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
-      #DOCKER_MODS: ghcr.io/gilbn/theme.park:bazarr
-      #TP_THEME: hotpink
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/bazarr:/config
@@ -372,8 +370,6 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
-      #DOCKER_MODS: ghcr.io/gilbn/theme.park:prowlarr
-      TP_THEME: hotpink
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/prowlarr:/config
@@ -412,15 +408,13 @@ services:
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
       GIDLIST: 44,105,109
+      NVIDIA_VISIBLE_DEVICES: all
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - "${FRIDAY_ROOT}/config/emby:/config"
       - /opt/vc/lib:/opt/vc/lib
       - /dev/dri:/dev/dri #optional
-      - /dev/vchiq:/dev/vchiq #optional
-      - /dev/video10:/dev/video10 #optional
-      - /dev/video11:/dev/video11 #optional
-      - /dev/video12:/dev/video12 #optional
+
 
     volumes_from:
       - volume_media
@@ -487,8 +481,6 @@ services:
     environment:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
-      DOCKER_MODS: ghcr.io/gilbn/theme.park:lidarr
-      TP_THEME: hotpink
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${FRIDAY_ROOT}/config/lidarr:/config
@@ -721,6 +713,7 @@ services:
     hostname: ${FRIDAY_NETWORK_QBITTORRENT_HOSTNAME}
     volumes:
       - ${FRIDAY_ROOT}/config/qbittorrent:/config
+      - ${FRIDAY_LOCATION_TORRENT_DOWNLOADS}:/downloads
     volumes_from:
       - volume_media
     ports:
@@ -731,8 +724,8 @@ services:
       PGID: ${FRIDAY_CONFIG_PGID}
       PUID: ${FRIDAY_CONFIG_PUID}
       TZ: ${FRIDAY_TIMEZONE}
+      TORRENTING_PORT: 6881
       WEBUI_PORT: 8090
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.qbittorrent.tls=true"
@@ -840,6 +833,7 @@ services:
       friday-nw:
         aliases:
           - ${FRIDAY_NETWORK_HOMEPAGE_HOSTNAME}
+
   # tdarr:
   #   privileged: true
   #   hostname: ${FRIDAY_NETWORK_TDARR_HOSTNAME}
