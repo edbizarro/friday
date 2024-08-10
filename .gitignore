@@ -3,3 +3,4 @@ acme.json
 config/
 downloads/
 downloads/*
+data/diun.db
